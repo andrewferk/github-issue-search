@@ -1,0 +1,35 @@
+.searchInput {
+  border: 1px solid transparent;
+  background-color: #efefef;
+  padding: 0.5em;
+  font-size: 1.2em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.autocomplete {
+  width: 400px;
+  position: relative;
+}
+
+.resultList {
+  position: absolute;
+  border: 1px solid #dadada;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.resultItem {
+  padding: 0.5em;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #dadada;
+}
+.resultItem:hover {
+  background-color: #e9e9e9;
+}

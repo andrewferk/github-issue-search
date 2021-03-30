@@ -6,10 +6,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-input {
-  border: 1px solid transparent;
-  background-color: #efefef;
-  padding: 1rem;
-  font-size: 2rem;
-}
