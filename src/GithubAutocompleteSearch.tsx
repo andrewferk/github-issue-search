@@ -16,6 +16,7 @@ const debounceSearch = debounce(
 
 type Props = {
   renderItem: ComponentType<{ item: SearchIssue }>;
+  onSelect: (item: SearchIssue) => void;
 };
 const GithubAutocompleteSearch = (props: Props) => {
   const [query, setQuery] = useState("");
@@ -29,6 +30,11 @@ const GithubAutocompleteSearch = (props: Props) => {
       debounceSearch.cancel();
       setItems([]);
     }
+  };
+
+  const handleItemSelect = (item: SearchIssue) => {
+    props.onSelect(item);
+    setItems([]);
   };
 
   return (
@@ -45,7 +51,11 @@ const GithubAutocompleteSearch = (props: Props) => {
         {items.length > 0 && (
           <ul className={styles.resultList}>
             {items.map((item) => (
-              <li key={item.id} className={styles.resultItem}>
+              <li
+                key={item.id}
+                className={styles.resultItem}
+                onClick={() => handleItemSelect(item)}
+              >
                 <props.renderItem item={item} />
               </li>
             ))}
