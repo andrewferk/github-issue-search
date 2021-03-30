@@ -1,24 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, ComponentType } from "react";
 import debounce from "./debounce";
 import styles from "./GithubAutocompleteSearch.module.css";
 import { search } from "./search";
+import { SearchIssue } from "./types";
 
-const debounceSearch = debounce(async (value: string, setResults: Function) => {
-  const res = await search(value);
-  setResults(res.items);
-}, 600);
+const debounceSearch = debounce(
+  async (value: string, cb: (items: SearchIssue[]) => void) => {
+    const res = await search(value);
+    if (res.ok) {
+      cb(res.data.items);
+    }
+  },
+  600
+);
 
-const GithubAutocompleteSearch = () => {
+type Props = {
+  renderItem: ComponentType<{ item: SearchIssue }>;
+};
+const GithubAutocompleteSearch = (props: Props) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [items, setItems] = useState<SearchIssue[]>([]);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
     if (value) {
-      debounceSearch(value, setResults);
+      debounceSearch(value, setItems);
     } else {
       debounceSearch.cancel();
-      setResults([]);
+      setItems([]);
     }
   };
 
@@ -33,11 +42,11 @@ const GithubAutocompleteSearch = () => {
           list="autocomplte-results"
           className={styles.searchInput}
         />
-        {results.length > 0 && (
+        {items.length > 0 && (
           <ul className={styles.resultList}>
-            {results.map((r) => (
-              <li key={r.id} className={styles.resultItem}>
-                {r.title}
+            {items.map((item) => (
+              <li key={item.id} className={styles.resultItem}>
+                <props.renderItem item={item} />
               </li>
             ))}
           </ul>

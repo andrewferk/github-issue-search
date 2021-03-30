@@ -5,7 +5,7 @@ import GithubAutocompleteSearch from "./GithubAutocompleteSearch";
 const App = () => {
   return (
     <div className="App">
-      <GithubAutocompleteSearch />
+      <GithubAutocompleteSearch renderItem={({ item }) => <>{item.title}</>} />
     </div>
   );
 };
