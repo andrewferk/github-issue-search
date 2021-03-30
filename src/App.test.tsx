@@ -28,6 +28,7 @@ test("renders autocomplete text input", async () => {
 
   const searchField = screen.getByPlaceholderText("Search");
   expect(searchField).toBeInTheDocument();
+  fireEvent.focus(searchField);
   fireEvent.input(searchField, { target: { value: "rendering" } });
 
   const result = await screen.findByText(items[0].title);
