@@ -23,6 +23,7 @@ test("renders autocomplete text input", async () => {
     <GithubAutocompleteSearch
       renderItem={(props) => <></>}
       onSelect={() => {}}
+      debounceDelay={0}
     />
   );
 
@@ -41,6 +42,7 @@ test("renders renderItem component for each result", async () => {
     <GithubAutocompleteSearch
       renderItem={(props) => <>xyZ{props.item.title}Cba</>}
       onSelect={() => {}}
+      debounceDelay={0}
     />
   );
 
@@ -58,8 +60,9 @@ test("searches issues using github API", async () => {
   mockFetchSearch([]);
   render(
     <GithubAutocompleteSearch
-      renderItem={(props) => <></>}
+      renderItem={() => <></>}
       onSelect={() => {}}
+      debounceDelay={0}
     />
   );
 
@@ -86,6 +89,7 @@ test("calls onSelect when item is clicked", async () => {
     <GithubAutocompleteSearch
       renderItem={(props) => <>{props.item.title}</>}
       onSelect={onSelect}
+      debounceDelay={0}
     />
   );
 

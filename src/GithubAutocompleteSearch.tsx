@@ -1,28 +1,30 @@
-import React, { useState, ComponentType, useRef } from "react";
+import React, { useState, ComponentType, useRef, useMemo } from "react";
 import debounce from "./debounce";
 import styles from "./GithubAutocompleteSearch.module.css";
 import { search } from "./search";
 import { SearchIssue } from "./types";
 
-const debounceSearch = debounce(
-  async (value: string, cb: (items: SearchIssue[]) => void) => {
-    const res = await search(value);
-    if (res.ok) {
-      cb(res.data.items);
-    }
-  },
-  600
-);
-
 type Props = {
   renderItem: ComponentType<{ item: SearchIssue }>;
   onSelect: (item: SearchIssue) => void;
+  debounceDelay: number;
 };
 const GithubAutocompleteSearch = (props: Props) => {
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<SearchIssue[]>([]);
-  const searchRef = useRef<HTMLInputElement>(null);
   const [hasFocus, setHasFocus] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const debounceSearch = useMemo(
+    () =>
+      debounce(async (value: string, cb: (items: SearchIssue[]) => void) => {
+        const res = await search(value);
+        if (res.ok) {
+          cb(res.data.items);
+        }
+      }, props.debounceDelay),
+    [props.debounceDelay]
+  );
 
   const handleQueryChange = (value: string) => {
     setQuery(value);

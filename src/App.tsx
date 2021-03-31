@@ -11,6 +11,7 @@ const App = () => {
       <GithubAutocompleteSearch
         renderItem={({ item }) => <>{item.title}</>}
         onSelect={setItem}
+        debounceDelay={600}
       />
       {item && <strong>{item.title}</strong>}
     </div>
