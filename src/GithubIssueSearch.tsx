@@ -37,6 +37,10 @@ const GithubIssueSearch = (props: Props) => {
     [props]
   );
 
+  // @TODO
+  // Each time the ArrowUp or ArrowDown key is pressed, new event listeners are created.
+  // This happens because when the Enter key is pressed, we need the activeItem.
+  // Can we find a more efficient way, ideally not needing to create new event listeners.
   useEffect(() => {
     if (!hasFocus || !items.length) return;
 
