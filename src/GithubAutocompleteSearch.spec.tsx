@@ -11,7 +11,9 @@ afterEach(() => {
   fetch.mockReset();
 });
 
-const mockFetchSearch = (items: { id: number; title: string }[]) => {
+const mockFetchSearch = (
+  items: { id: number; title: string; labels: {}[] }[]
+) => {
   fetch.mockResolvedValueOnce({
     status: 200,
     json: async () => ({ items }),
@@ -33,8 +35,8 @@ test("renders autocomplete text input", async () => {
 
 test("renders renderItem component for each result", async () => {
   const items = [
-    { id: 10015, title: "Performance issue with rendering in IE8" },
-    { id: 11929, title: "IE8 lacks rotating animation at 120fps" },
+    { id: 10015, title: "Performance issue with rendering in IE8", labels: [] },
+    { id: 11929, title: "IE8 lacks rotating animation at 120fps", labels: [] },
   ];
   mockFetchSearch(items);
 
@@ -80,7 +82,7 @@ test("searches issues using github API", async () => {
 
 test("calls onSelect when item is clicked", async () => {
   const items = [
-    { id: 10015, title: "Performance issue with rendering in IE8" },
+    { id: 10015, title: "Performance issue with rendering in IE8", labels: [] },
   ];
   mockFetchSearch(items);
 
