@@ -1,4 +1,4 @@
-import React, { useState, ComponentType, useRef, useMemo } from "react";
+import React, { useState, ComponentType, useMemo, useEffect } from "react";
 import debounce from "./debounce";
 import styles from "./GithubAutocompleteSearch.module.css";
 import { search } from "./search";
@@ -13,34 +13,58 @@ const GithubAutocompleteSearch = (props: Props) => {
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<SearchIssue[]>([]);
   const [hasFocus, setHasFocus] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
+  const [activeItem, setActiveItem] = useState(0);
 
   const debounceSearch = useMemo(
     () =>
-      debounce(async (value: string, cb: (items: SearchIssue[]) => void) => {
+      debounce(async (value: string) => {
         const res = await search(value);
         if (res.ok) {
-          cb(res.data.items);
+          setItems(res.data.items);
+          setActiveItem(0);
         }
       }, props.debounceDelay),
     [props.debounceDelay]
   );
 
+  const handleItemSelect = useMemo(
+    () => (item: SearchIssue) => {
+      props.onSelect(item);
+      setHasFocus(false);
+      setActiveItem(0);
+    },
+    [props]
+  );
+
+  useEffect(() => {
+    if (!hasFocus) return;
+    const keydownHandler = (e: KeyboardEvent) => {
+      if (items.length === 0) return;
+      const keyFuncs: { [key: string]: Function } = {
+        ArrowDown: () => setActiveItem((i) => (i + 1) % items.length),
+        ArrowUp: () =>
+          setActiveItem((i) => (items.length ? i - 1 : items.length - 1)),
+        Enter: () => handleItemSelect(items[activeItem]),
+      };
+      const keyFunc = keyFuncs[e.key];
+      if (!keyFunc) return;
+      keyFunc();
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", keydownHandler);
+    return () => {
+      window.removeEventListener("keydown", keydownHandler);
+    };
+  }, [hasFocus, items, handleItemSelect, activeItem]);
+
   const handleQueryChange = (value: string) => {
+    setHasFocus(true);
     setQuery(value);
     if (value) {
-      debounceSearch(value, setItems);
+      debounceSearch(value);
     } else {
       debounceSearch.cancel();
       setItems([]);
-    }
-  };
-
-  const handleItemSelect = (item: SearchIssue) => {
-    props.onSelect(item);
-    setHasFocus(false);
-    if (searchRef.current !== null) {
-      searchRef.current.blur();
     }
   };
 
@@ -55,14 +79,15 @@ const GithubAutocompleteSearch = (props: Props) => {
           onBlur={() => setHasFocus(false)}
           onFocus={() => setHasFocus(true)}
           className={styles.searchInput}
-          ref={searchRef}
         />
         {hasFocus && items.length > 0 && (
           <ul className={styles.resultList}>
-            {items.map((item) => (
+            {items.map((item, i) => (
               <li
                 key={item.id}
-                className={styles.resultItem}
+                className={`${styles.resultItem} ${
+                  i === activeItem ? styles.activeItem : ""
+                }`}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleItemSelect(item)}
               >
