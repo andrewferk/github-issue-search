@@ -18,7 +18,7 @@ const mockFetchSearch = (items: { id: number; title: string }[]) => {
   });
 };
 
-test("renders autocomplete text input", async () => {
+test("renders autocomplete for github issues", async () => {
   const items = [
     { id: 10015, title: "Performance issue with rendering in IE8" },
   ];
@@ -27,15 +27,9 @@ test("renders autocomplete text input", async () => {
   render(<App />);
 
   const searchField = screen.getByPlaceholderText("Search");
-  expect(searchField).toBeInTheDocument();
   fireEvent.focus(searchField);
   fireEvent.input(searchField, { target: { value: "rendering" } });
 
   const result = await screen.findByText(items[0].title);
   expect(result).toBeInTheDocument();
-
-  expect(fetch).toHaveBeenCalledTimes(1);
-  expect(fetch).toHaveBeenCalledWith(
-    "https://api.github.com/search/issues?q=rendering+in:title+is:issue+repo:facebook/react"
-  );
 });
