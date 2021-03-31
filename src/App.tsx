@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import GithubAutocompleteSearch from "./GithubAutocompleteSearch";
+import GithubIssueSearch from "./GithubIssueSearch";
 import { SearchIssue } from "./types";
 
 const App = () => {
@@ -7,7 +7,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <GithubAutocompleteSearch
+      <GithubIssueSearch
         renderItem={({ item }) => (
           <>
             <strong>Title:</strong> {item.title}
@@ -18,6 +18,7 @@ const App = () => {
         )}
         onSelect={setItem}
         debounceDelay={600}
+        repo="facebook/react"
       />
       <h2>Selected Issue</h2>
       {item ? (

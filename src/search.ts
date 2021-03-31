@@ -1,17 +1,11 @@
-import { SearchIssuesResponse } from "./types";
+import { SearchIssuesResponse, Ok } from "./types";
 
-type Ok<T> =
-  | {
-      ok: true;
-      data: T;
-    }
-  | { ok: false; error: string };
-
-export const search = async (
+export const searchGithubIssues = async (
+  repo: string,
   value: string
 ): Promise<Ok<SearchIssuesResponse>> => {
   const res = await fetch(
-    `https://api.github.com/search/issues?q=${value}+in:title+is:issue+repo:facebook/react`
+    `https://api.github.com/search/issues?q=${value}+in:title+is:issue+repo:${repo}`
   );
   const json = await res.json();
 

@@ -13,3 +13,10 @@ export type SearchIssuesResponse = {
   total_count: number;
   items: SearchIssue[];
 };
+
+export type Ok<T> =
+  | {
+      ok: true;
+      data: T;
+    }
+  | { ok: false; error: string };

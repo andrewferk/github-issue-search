@@ -1,15 +1,16 @@
 import React, { useState, ComponentType, useMemo, useEffect } from "react";
 import debounce from "./debounce";
-import styles from "./GithubAutocompleteSearch.module.css";
-import { search } from "./search";
+import styles from "./GithubIssueSearch.module.css";
+import { searchGithubIssues } from "./search";
 import { SearchIssue } from "./types";
 
 type Props = {
   renderItem: ComponentType<{ item: SearchIssue }>;
   onSelect: (item: SearchIssue) => void;
   debounceDelay: number;
+  repo: string;
 };
-const GithubAutocompleteSearch = (props: Props) => {
+const GithubIssueSearch = (props: Props) => {
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<SearchIssue[]>([]);
   const [hasFocus, setHasFocus] = useState(false);
@@ -18,13 +19,13 @@ const GithubAutocompleteSearch = (props: Props) => {
   const debounceSearch = useMemo(
     () =>
       debounce(async (value: string) => {
-        const res = await search(value);
+        const res = await searchGithubIssues(props.repo, value);
         if (res.ok) {
           setItems(res.data.items);
           setActiveItem(0);
         }
       }, props.debounceDelay),
-    [props.debounceDelay]
+    [props]
   );
 
   const handleItemSelect = useMemo(
@@ -37,20 +38,23 @@ const GithubAutocompleteSearch = (props: Props) => {
   );
 
   useEffect(() => {
-    if (!hasFocus) return;
+    if (!hasFocus || !items.length) return;
+
     const keydownHandler = (e: KeyboardEvent) => {
-      if (items.length === 0) return;
       const keyFuncs: { [key: string]: Function } = {
         ArrowDown: () => setActiveItem((i) => (i + 1) % items.length),
         ArrowUp: () =>
           setActiveItem((i) => (items.length ? i - 1 : items.length - 1)),
         Enter: () => handleItemSelect(items[activeItem]),
       };
+
       const keyFunc = keyFuncs[e.key];
       if (!keyFunc) return;
+
       keyFunc();
       e.preventDefault();
     };
+
     window.addEventListener("keydown", keydownHandler);
     return () => {
       window.removeEventListener("keydown", keydownHandler);
@@ -101,4 +105,4 @@ const GithubAutocompleteSearch = (props: Props) => {
   );
 };
 
-export default GithubAutocompleteSearch;
+export default GithubIssueSearch;

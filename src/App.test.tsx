@@ -11,7 +11,7 @@ afterEach(() => {
   fetch.mockReset();
 });
 
-const mockFetchSearch = (items: { id: number; title: string }[]) => {
+const mockFetchSearch = (items: any) => {
   fetch.mockResolvedValueOnce({
     status: 200,
     json: async () => ({ items }),
@@ -20,7 +20,7 @@ const mockFetchSearch = (items: { id: number; title: string }[]) => {
 
 test("renders autocomplete for github issues", async () => {
   const items = [
-    { id: 10015, title: "Performance issue with rendering in IE8" },
+    { id: 10015, title: "Performance issue with rendering in IE8", labels: [] },
   ];
   mockFetchSearch(items);
 

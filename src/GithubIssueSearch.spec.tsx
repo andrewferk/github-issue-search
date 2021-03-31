@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import GithubAutocompleteSearch from "./GithubAutocompleteSearch";
+import GithubIssueSearch from "./GithubIssueSearch";
 
 let fetch: jest.Mock;
 beforeAll(() => {
@@ -11,9 +11,7 @@ afterEach(() => {
   fetch.mockReset();
 });
 
-const mockFetchSearch = (
-  items: { id: number; title: string; labels: {}[] }[]
-) => {
+const mockFetchSearch = (items: any) => {
   fetch.mockResolvedValueOnce({
     status: 200,
     json: async () => ({ items }),
@@ -22,10 +20,11 @@ const mockFetchSearch = (
 
 test("renders autocomplete text input", async () => {
   render(
-    <GithubAutocompleteSearch
-      renderItem={(props) => <></>}
+    <GithubIssueSearch
+      renderItem={() => <></>}
       onSelect={() => {}}
       debounceDelay={0}
+      repo="facebook/react"
     />
   );
 
@@ -41,10 +40,11 @@ test("renders renderItem component for each result", async () => {
   mockFetchSearch(items);
 
   render(
-    <GithubAutocompleteSearch
+    <GithubIssueSearch
       renderItem={(props) => <>xyZ{props.item.title}Cba</>}
       onSelect={() => {}}
       debounceDelay={0}
+      repo="facebook/react"
     />
   );
 
@@ -61,10 +61,11 @@ test("renders renderItem component for each result", async () => {
 test("searches issues using github API", async () => {
   mockFetchSearch([]);
   render(
-    <GithubAutocompleteSearch
+    <GithubIssueSearch
       renderItem={() => <></>}
       onSelect={() => {}}
       debounceDelay={0}
+      repo="facebook/react"
     />
   );
 
@@ -88,10 +89,11 @@ test("calls onSelect when item is clicked", async () => {
 
   const onSelect = jest.fn();
   render(
-    <GithubAutocompleteSearch
+    <GithubIssueSearch
       renderItem={(props) => <>{props.item.title}</>}
       onSelect={onSelect}
       debounceDelay={0}
+      repo="facebook/react"
     />
   );
 
